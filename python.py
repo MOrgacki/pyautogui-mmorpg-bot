@@ -1,48 +1,51 @@
 import cv2
 import numpy as np
 from PIL import ImageGrab
-import pygetwindow
+import pygetwindow as gw
 import pyautogui
+import time
 
-# ImageGrab.grab = partial(ImageGrab.grab, all_screens=True)
-
-# print('Press Ctrl-C to quit.')
-
-# try:
-#     while True:
-#         x, y = pyautogui.position()
-#         positionStr = 'X: ' + str(x).rjust(4) + ' Y: ' + str(y).rjust(4)
-#         print(positionStr, end='')
-#         print('\b' * len(positionStr), end='', flush=True)
-
-# except KeyboardInterrupt:
-#     print('\nDone.')
+# Attack TODO only 1 target
 
 
-def chase():
-    if pyautogui.locateOnWindow('uiControls/clickedChase.png', grayscale=True, confidence=.9):
-        return
-    else:
-        cords = pyautogui.locateOnWindow(
-            'uiControls/clickChase.png', grayscale=True, confidence=.9)
-        pyautogui.click(cords[0], cords[1], 1)
+def attack():
+    while True:
+        if pyautogui.pixelMatchesColor(1748, 495, (63, 63, 63)):
+            pyautogui.hotkey('.')
 
 
-titles = pygetwindow.getActiveWindow
+# Initialize screen
 
-while True:
-    cars = pygetwindow.getActiveWindow()
-    print(cars.left, cars.top, cars.width, cars.height)
-    img = ImageGrab.grab(bbox=(int(cars.left),
-                               int(cars.top),
-                               int(cars.left + cars.width),
-                               int(cars.top + cars.height)))
-    frame = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
-    pygetwindow.waitKey(1)
-    pygetwindow.imshow('frame', frame)
 
-if pygetwindow.isVisible('Tibia Tibia - Don Szpermix'):
-    print('found title')
-    chase()
+def initialize():
+    # set chase
+    pyautogui.screenshot('chase.png', region=(1895, 190, 17, 17))
+    chaseIconPos = pyautogui.locateCenterOnScreen('chase.png')
+    pyautogui.click(chaseIconPos)
+
+    # set full atack
+    pyautogui.screenshot('fullAttack.png', region=(1871, 166, 17, 17))
+    fullAtackIconPos = pyautogui.locateCenterOnScreen('fullAttack.png')
+    pyautogui.click(fullAtackIconPos)
+
+    return chaseIconPos, fullAtackIconPos
+
+
+# TODO
+
+
+def healing():
+    pyautogui.screenshot('chase.png', region=(1895, 190, 17, 17))
+    chaseIconPos = pyautogui.locateCenterOnScreen('chase.png')
+    return chaseIconPos
+
+
+# Prepare
+time.sleep(5)
+
+if gw.isVisible('Tibia Tibia - Don Szpermix'):
+    initialize()
+    attack()
+
 else:
     print('Brak okna')
