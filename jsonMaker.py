@@ -25,12 +25,7 @@ json = [
     'images/marks/bagmark.png',
     'images/marks/blueflagmark.png',
     'images/marks/swordmark.png',
-    'images/marks/crossmark.png',
-    'images/marks/dollarmark.png',
-    'images/marks/exlamationmark.png',
-    'images/marks/knotdown.png',
-    'images/marks/dollarmark.png',
-    'images/marks/knotup.png',
+    'images/marks/blueflagmark.png'
 ]
 
-print(len(json))
+print(f"Initialized script with {len(json)} nodes")
