@@ -20,12 +20,29 @@
 
 
 json = []
-
 json = [
     'images/marks/bagmark.png',
     'images/marks/blueflagmark.png',
+    'images/marks/questionmark.png',
+    'images/marks/exlamationmark.png',
+    'images/marks/redcrossmark.png',
+    'images/marks/crossmark.png',
+    'images/marks/lipsmark.png',
+    'images/marks/pencilmark.png',
     'images/marks/swordmark.png',
-    'images/marks/blueflagmark.png'
 ]
+
+# REVERSE json?
+# json = [
+#     'images/marks/bagmark.png',
+#     'images/marks/blueflagmark.png',
+#     'images/marks/questionmark.png',
+#     'images/marks/exlamationmark.png',
+#     'images/marks/redcrossmark.png',
+#     'images/marks/crossmark.png',
+#     'images/marks/lipsmark.png',
+#     'images/marks/pencilmark.png',
+#     'images/marks/swordmark.png',
+# ]
 
 print(f"Initialized script with {len(json)} nodes")
