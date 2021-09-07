@@ -19,20 +19,31 @@
 # 'swordmark': 'images/marks/swordmark.png'
 
 
-json = []
-json = [
-    'images/marks/bagmark.png',
-    'images/marks/blueflagmark.png',
-    'images/marks/questionmark.png',
-    'images/marks/exlamationmark.png',
-    'images/marks/redcrossmark.png',
-    'images/marks/crossmark.png',
-    'images/marks/lipsmark.png',
-    'images/marks/pencilmark.png',
-    'images/marks/swordmark.png',
-]
+# json = [
+#     # 'images/marks/checkmark.png',
+#     # 'images/marks/questionmark.png',
+#     # 'images/marks/exlamationmark.png',
+#     # 'images/marks/redcrossmark.png',
+#     # 'images/marks/crossmark.png'
+# ]
 
-# REVERSE json?
+# krokodyle -2
+# json = [
+#     'images/marks/checkmark.png',
+#     'images/marks/questionmark.png',
+#     'images/marks/exlamationmark.png',
+#     'images/marks/redcrossmark.png',
+#     'images/marks/crossmark.png',
+#     'images/marks/lipsmark.png',
+#     'images/marks/pencilmark.png',
+#     'images/marks/swordmark.png',
+#     'images/marks/blueflagmark.png',
+#     'images/marks/lockermark.png',
+#     'images/marks/bagmark.png',
+#     'images/marks/pointerup.png',
+#     'images/marks/dollarmark.png',
+# ]
+
 # json = [
 #     'images/marks/bagmark.png',
 #     'images/marks/blueflagmark.png',
@@ -43,6 +54,30 @@ json = [
 #     'images/marks/lipsmark.png',
 #     'images/marks/pencilmark.png',
 #     'images/marks/swordmark.png',
+
+# skleetons -2
+# json = [
+#     'images/marks/checkmark.png',
+#     'images/marks/exlamationmark.png',
+#     'images/marks/redcrossmark.png',
+#     'images/marks/crossmark.png',
+#     'images/marks/lipsmark.png',
+#     'images/marks/crossmark.png',
+#     'images/marks/lipsmark.png',
+#     'images/marks/pencilmark.png',
 # ]
+
+# REVERSE json?
+json = [
+    'images/marks/bagmark.png',
+    'images/marks/blueflagmark.png',
+    'images/marks/questionmark.png',
+    'images/marks/exlamationmark.png',
+    # 'images/marks/redcrossmark.png',
+    # 'images/marks/crossmark.png',
+    # 'images/marks/lipsmark.png',
+    # 'images/marks/pencilmark.png',
+    # 'images/marks/swordmark.png',
+]
 
 print(f"Initialized script with {len(json)} nodes")

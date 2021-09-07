@@ -8,7 +8,7 @@ VIEWPORT_WIDTH = 400
 VIEWPORT_HEIGHT = 60
 
 '''
-Executes test one
+Executes Test task with process stop logic implemented
 '''
 
 
@@ -34,7 +34,7 @@ def hunt(task):
 
 
 '''
-Executes hunting through checkbox
+Executes chasing through checkbox
 '''
 
 
