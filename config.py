@@ -14,8 +14,11 @@ chasePos = 781, 150
 
 # battleListX, battleListY = 1725, 96
 # monsterRedX, monsterRedY = 1572, 90
-monsterRedX, monsterRedY = 471, 28
-battleListX, battleListY = 605, 31
+monsterRedX, monsterRedY = 31, 23
+battleListX, battleListY = 165, 32
+
+# xPosBetween = 40, 50
+# yPosBetween = 50, 65
 
 xPosBetween = 684, 690
 yPosBetween = 55, 70
