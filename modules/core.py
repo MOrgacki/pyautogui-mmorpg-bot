@@ -3,7 +3,6 @@ import pyautogui
 import time
 from PIL import ImageGrab
 from pebble import concurrent
-import jsonMaker
 import config as cfg
 import keyboard
 
@@ -25,70 +24,73 @@ def doRandomPause(a, b):
 
 
 @concurrent.process(name='hunting')
-def killandwalk():
+def killandwalk(loaded_json):
     _arrayPos = 0
     while True:
-        time.sleep(.3)
-        # if R==0
-        # bbox=(640,0, 744,110)
-        battle_area = ImageGrab.grab(bbox=(440,0, 644,110))
-        if battle_area.getpixel((cfg.battleListX, cfg.battleListY))[0] == 0 and battle_area.getpixel((cfg.monsterRedX, cfg.monsterRedY))[0] != 255:
-            print('Rozpoznalem cel')
-            pyautogui.press(cfg.attackKey)
+        try:
+            time.sleep(.3)
+            # if R==0
+            # bbox=(640,0, 744,110)
             battle_area = ImageGrab.grab(bbox=(440,0, 644,110))
-            while True:
+            if battle_area.getpixel((cfg.battleListX, cfg.battleListY))[0] == 0 and battle_area.getpixel((cfg.monsterRedX, cfg.monsterRedY))[0] != 255:
+                print('Rozpoznalem cel')
+                pyautogui.press(cfg.attackKey)
                 battle_area = ImageGrab.grab(bbox=(440,0, 644,110))
-                if battle_area.getpixel((cfg.monsterRedX, cfg.monsterRedY))[0] == 255:
-                   
-                    print('Atakuje!')
-                    time.sleep(2)
-                    # if ImageGrab.grab().getpixel(cfg.looted)[0]  == 240 or ImageGrab.grab().getpixel(cfg.looted2)[0] == 240:
+                while True:
+                    battle_area = ImageGrab.grab(bbox=(440,0, 644,110))
+                    if battle_area.getpixel((cfg.monsterRedX, cfg.monsterRedY))[0] == 255:
+                    
+                        print('Atakuje!')
+                        time.sleep(2)
+                        # if ImageGrab.grab().getpixel(cfg.looted)[0]  == 240 or ImageGrab.grab().getpixel(cfg.looted2)[0] == 240:
+                    else:
+                        break
+                pyautogui.keyDown('shift')
+                pyautogui.click(221, 241, button='right')
+                time.sleep(.1)
+                pyautogui.click(187, 241, button='right')
+                time.sleep(.1)
+                pyautogui.click(190, 213, button='right')
+                time.sleep(.1)
+                pyautogui.click(193, 186, button='right')
+                time.sleep(.1)
+                pyautogui.click(221, 196, button='right')
+                time.sleep(.1)
+                pyautogui.click(248, 193, button='right')
+                time.sleep(.1)
+                pyautogui.click(253, 215, button='right')
+                time.sleep(.1)
+                pyautogui.click(257, 243, button='right')
+                time.sleep(.1)
+                pyautogui.click(221, 241, button='right')
+                time.sleep(.1)
+                pyautogui.moveTo(221, 218)
+                time.sleep(.1)
+                pyautogui.keyUp('shift')
+                time.sleep(.1)
+                pyautogui.press('f4')
+                time.sleep(.1)
+                pyautogui.press('f5')
+                time.sleep(.1)            
+            # bbox=(440,0, 644,110)
+            elif battle_area.getpixel((cfg.battleListX, cfg.battleListY))[0] != 0:
+                # pos(x,y) must be around 1804,105 if so then char pyautogui.pixel(is in the middle of mark
+                battle_area = ImageGrab.grab(bbox=(440,0, 644,110))
+                if _arrayPos < len(loaded_json):
+                    print(f"Walking to {loaded_json[_arrayPos]}")
+                    icon = pyautogui.locateCenterOnScreen(
+                        loaded_json[_arrayPos])
+                    pyautogui.click(icon)
+                    x, y = icon
+                    print(cfg.xPosBetween[0] > x > cfg.xPosBetween[1]
+                        and cfg.yPosBetween[0] > y > cfg.yPosBetween[1])
+                    if cfg.xPosBetween[0] < x < cfg.xPosBetween[1] and cfg.yPosBetween[0] < y < cfg.yPosBetween[1]:
+                        _arrayPos += 1
                 else:
-                    break
-            pyautogui.keyDown('shift')
-            pyautogui.click(221, 241, button='right')
-            time.sleep(.1)
-            pyautogui.click(187, 241, button='right')
-            time.sleep(.1)
-            pyautogui.click(190, 213, button='right')
-            time.sleep(.1)
-            pyautogui.click(193, 186, button='right')
-            time.sleep(.1)
-            pyautogui.click(221, 196, button='right')
-            time.sleep(.1)
-            pyautogui.click(248, 193, button='right')
-            time.sleep(.1)
-            pyautogui.click(253, 215, button='right')
-            time.sleep(.1)
-            pyautogui.click(257, 243, button='right')
-            time.sleep(.1)
-            pyautogui.click(221, 241, button='right')
-            time.sleep(.1)
-            pyautogui.moveTo(221, 218)
-            time.sleep(.1)
-            pyautogui.keyUp('shift')
-            time.sleep(.1)
-            pyautogui.press('f4')
-            time.sleep(.1)
-            pyautogui.press('f5')
-            time.sleep(.1)            
-        # bbox=(440,0, 644,110)
-        elif battle_area.getpixel((cfg.battleListX, cfg.battleListY))[0] != 0:
-            # pos(x,y) must be around 1804,105 if so then char pyautogui.pixel(is in the middle of mark
-            battle_area = ImageGrab.grab(bbox=(440,0, 644,110))
-            if _arrayPos < len(jsonMaker.loaded_json):
-                print(f"Walking to {jsonMaker.loaded_json[_arrayPos]}")
-                icon = pyautogui.locateCenterOnScreen(
-                    jsonMaker.loaded_json[_arrayPos])
-                pyautogui.click(icon)
-                x, y = icon
-                print(cfg.xPosBetween[0] > x > cfg.xPosBetween[1]
-                      and cfg.yPosBetween[0] > y > cfg.yPosBetween[1])
-                if cfg.xPosBetween[0] < x < cfg.xPosBetween[1] and cfg.yPosBetween[0] < y < cfg.yPosBetween[1]:
-                    _arrayPos += 1
-            else:
-                _arrayPos = 0
-
+                    _arrayPos = 0
+        except:
+               pyautogui.press('f6')
+               print('Clicked f6')            
 
 @concurrent.process(name='chase')
 def chase():

@@ -1,4 +1,5 @@
 import json
+
 # 'bagmark': 'images/marks/bagmark.png',
 # 'blueflagmark': 'images/marks/blueflagmark.png',
 # 'checkmark': 'images/marks/checkmark.png',
@@ -19,8 +20,12 @@ import json
 # 'starkmark': 'images/marks/starkmark.png',
 # 'swordmark': 'images/marks/swordmark.png'
 
-file = open('waypoints.json',)
+def select_json(name):
+    file = open('./data/'+name,)
 
-loaded_json = json.load(file)
-loaded_json = loaded_json['waypoints']
-print(f"Initialized script with {len(loaded_json)} nodes")
+    loaded_json = json.load(file)
+    loaded_json = loaded_json['waypoints']
+    print(f"Initialized script with {len(loaded_json)} nodes")
+    return loaded_json
+
+
