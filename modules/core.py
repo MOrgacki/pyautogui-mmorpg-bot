@@ -64,7 +64,7 @@ def killandwalk():
             time.sleep(.1)
         elif ImageGrab.grab().getpixel((cfg.battleListX, cfg.battleListY))[0] != 0:
             # pos(x,y) must be around 1804,105 if so then char pyautogui.pixel(is in the middle of mark
-            if _arrayPos < len(jsonMaker.json):
+            if _arrayPos < len(jsonMaker.parsed_json['waypoints']):
                 print(f"Walking to {jsonMaker.json[_arrayPos]}")
                 icon = pyautogui.locateCenterOnScreen(
                     jsonMaker.json[_arrayPos])

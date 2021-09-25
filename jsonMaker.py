@@ -1,3 +1,4 @@
+import json
 # 'bagmark': 'images/marks/bagmark.png',
 # 'blueflagmark': 'images/marks/blueflagmark.png',
 # 'checkmark': 'images/marks/checkmark.png',
@@ -68,16 +69,8 @@
 # ]
 
 # REVERSE json?
-json = [
-    'images/marks/bagmark.png',
-    'images/marks/blueflagmark.png',
-    'images/marks/questionmark.png',
-    'images/marks/exlamationmark.png',
-    # 'images/marks/redcrossmark.png',
-    # 'images/marks/crossmark.png',
-    # 'images/marks/lipsmark.png',
-    # 'images/marks/pencilmark.png',
-    # 'images/marks/swordmark.png',
-]
+file = open('test.json')
 
-print(f"Initialized script with {len(json)} nodes")
+parsed_json = json.load(file)
+
+print(parsed_json['waypoints'])
