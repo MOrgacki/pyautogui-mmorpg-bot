@@ -1,0 +1,10 @@
+{
+    "waypoints": [
+        "images/marks/bagmark.png",
+        "images/marks/blueflagmark.png",
+        "images/marks/questionmark.png",
+        "images/marks/exlamationmark.png",
+        "images/marks/lockermark.png",
+        "images/marks/crossmark.png"
+    ]
+}

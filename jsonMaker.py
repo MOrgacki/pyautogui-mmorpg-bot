@@ -20,57 +20,10 @@ import json
 # 'swordmark': 'images/marks/swordmark.png'
 
 
-# json = [
-#     # 'images/marks/checkmark.png',
-#     # 'images/marks/questionmark.png',
-#     # 'images/marks/exlamationmark.png',
-#     # 'images/marks/redcrossmark.png',
-#     # 'images/marks/crossmark.png'
-# ]
+def select_json(name):
+    file = open('./data/'+name,)
 
-# krokodyle -2
-# json = [
-#     'images/marks/checkmark.png',
-#     'images/marks/questionmark.png',
-#     'images/marks/exlamationmark.png',
-#     'images/marks/redcrossmark.png',
-#     'images/marks/crossmark.png',
-#     'images/marks/lipsmark.png',
-#     'images/marks/pencilmark.png',
-#     'images/marks/swordmark.png',
-#     'images/marks/blueflagmark.png',
-#     'images/marks/lockermark.png',
-#     'images/marks/bagmark.png',
-#     'images/marks/pointerup.png',
-#     'images/marks/dollarmark.png',
-# ]
-
-# json = [
-#     'images/marks/bagmark.png',
-#     'images/marks/blueflagmark.png',
-#     'images/marks/questionmark.png',
-#     'images/marks/exlamationmark.png',
-#     'images/marks/redcrossmark.png',
-#     'images/marks/crossmark.png',
-#     'images/marks/lipsmark.png',
-#     'images/marks/pencilmark.png',
-#     'images/marks/swordmark.png',
-
-# skleetons -2
-# json = [
-#     'images/marks/checkmark.png',
-#     'images/marks/exlamationmark.png',
-#     'images/marks/redcrossmark.png',
-#     'images/marks/crossmark.png',
-#     'images/marks/lipsmark.png',
-#     'images/marks/crossmark.png',
-#     'images/marks/lipsmark.png',
-#     'images/marks/pencilmark.png',
-# ]
-
-# REVERSE json?
-file = open('test.json')
-
-parsed_json = json.load(file)
-
-print(parsed_json['waypoints'])
+    loaded_json = json.load(file)
+    loaded_json = loaded_json['waypoints']
+    print(f"Initialized script with {len(loaded_json)} nodes")
+    return loaded_json
