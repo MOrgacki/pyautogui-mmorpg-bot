@@ -28,7 +28,7 @@ def killandwalk(loaded_json):
     _arrayPos = 0
     while True:
         try:
-            time.sleep(.3)
+            time.sleep(.1)
             # if R==0
             # bbox=(640,0, 744,110)
             battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
@@ -41,37 +41,44 @@ def killandwalk(loaded_json):
                     if battle_area.getpixel((cfg.monsterRedX, cfg.monsterRedY))[0] == 255:
 
                         print('Atakuje!')
-                        time.sleep(2)
+                        time.sleep(1)
                         # if ImageGrab.grab().getpixel(cfg.looted)[0]  == 240 or ImageGrab.grab().getpixel(cfg.looted2)[0] == 240:
                     else:
                         break
-                pyautogui.keyDown('shift')
-                pyautogui.click(221, 241, button='right')
-                time.sleep(.1)
-                pyautogui.click(187, 241, button='right')
-                time.sleep(.1)
-                pyautogui.click(190, 213, button='right')
-                time.sleep(.1)
-                pyautogui.click(193, 186, button='right')
-                time.sleep(.1)
-                pyautogui.click(221, 196, button='right')
-                time.sleep(.1)
-                pyautogui.click(248, 193, button='right')
-                time.sleep(.1)
-                pyautogui.click(253, 215, button='right')
-                time.sleep(.1)
-                pyautogui.click(257, 243, button='right')
-                time.sleep(.1)
-                pyautogui.click(221, 241, button='right')
-                time.sleep(.1)
-                pyautogui.moveTo(221, 218)
-                time.sleep(.1)
-                pyautogui.keyUp('shift')
-                time.sleep(.1)
-                pyautogui.press('f4')
-                time.sleep(.1)
-                pyautogui.press('f5')
-                time.sleep(.1)
+
+                chat_area = ImageGrab.grab(bbox=(0, 477, 60, 578))
+                chat_area_array = np.array(chat_area)
+                color = [240, 180, 0, 255]
+                warunek = np.where(np.all(chat_area_array == color, axis=-1))
+                print(warunek)
+                if warunek[0].size > 0 and warunek[1].size > 0:
+                    pyautogui.keyDown('shift')
+                    pyautogui.click(221, 241, button='right')
+                    time.sleep(.1)
+                    pyautogui.click(187, 241, button='right')
+                    time.sleep(.1)
+                    pyautogui.click(190, 213, button='right')
+                    time.sleep(.1)
+                    pyautogui.click(193, 186, button='right')
+                    time.sleep(.1)
+                    pyautogui.click(221, 196, button='right')
+                    time.sleep(.1)
+                    pyautogui.click(248, 193, button='right')
+                    time.sleep(.1)
+                    pyautogui.click(253, 215, button='right')
+                    time.sleep(.1)
+                    pyautogui.click(257, 243, button='right')
+                    time.sleep(.1)
+                    pyautogui.click(221, 241, button='right')
+                    time.sleep(.1)
+                    pyautogui.moveTo(221, 218)
+                    time.sleep(.1)
+                    pyautogui.keyUp('shift')
+                    time.sleep(.1)
+                    pyautogui.press('f4')
+                    time.sleep(.1)
+                    pyautogui.press('f5')
+                    time.sleep(.1)
             # bbox=(440,0, 644,110)
             elif battle_area.getpixel((cfg.battleListX, cfg.battleListY))[0] != 0:
                 # pos(x,y) must be around 1804,105 if so then char pyautogui.pixel(is in the middle of mark
@@ -93,7 +100,7 @@ def killandwalk(loaded_json):
             print('Clicked f6')
 
 
-@concurrent.process(name='chase')
+@ concurrent.process(name='chase')
 def chase():
     while True:
 
@@ -104,7 +111,7 @@ def chase():
         time.sleep(10)
 
 
-@concurrent.process(name='heal')
+@ concurrent.process(name='heal')
 def heal():
 
     while True:
