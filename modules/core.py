@@ -28,7 +28,6 @@ def killandwalk(loaded_json):
     _arrayPos = 0
     while True:
         try:
-            time.sleep(.1)
             # if R==0
             # bbox=(640,0, 744,110)
             battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
@@ -39,13 +38,12 @@ def killandwalk(loaded_json):
                 while True:
                     battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
                     if battle_area.getpixel((cfg.monsterRedX, cfg.monsterRedY))[0] == 255:
-
                         print('Atakuje!')
-                        time.sleep(1)
+                        # time.sleep(1.5)
                         # if ImageGrab.grab().getpixel(cfg.looted)[0]  == 240 or ImageGrab.grab().getpixel(cfg.looted2)[0] == 240:
                     else:
                         break
-
+                time.sleep(.1)
                 chat_area = ImageGrab.grab(bbox=(0, 477, 60, 578))
                 chat_area_array = np.array(chat_area)
                 color = [240, 180, 0, 255]
