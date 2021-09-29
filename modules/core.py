@@ -28,6 +28,7 @@ def killandwalk(loaded_json):
     _arrayPos = 0
     while True:
         try:
+            time.sleep(.1)
             # if R==0
             # bbox=(640,0, 744,110)
             battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
@@ -39,47 +40,50 @@ def killandwalk(loaded_json):
                     battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
                     if battle_area.getpixel((cfg.monsterRedX, cfg.monsterRedY))[0] == 255:
                         print('Atakuje!')
-                        # time.sleep(1.5)
-                        # if ImageGrab.grab().getpixel(cfg.looted)[0]  == 240 or ImageGrab.grab().getpixel(cfg.looted2)[0] == 240:
+                        time.sleep(.1)
+                        if ImageGrab.grab(bbox=(776, 150, 780, 158)).getpixel((cfg.chasePosX, cfg.chasePosY))[1] != 255:
+                            pyautogui.press(cfg.chaseKey)
+                            print('chase')
+                            time.sleep(.1)
                     else:
+                        time.sleep(.1)
                         break
                 time.sleep(.1)
                 chat_area = ImageGrab.grab(bbox=(0, 477, 60, 578))
                 chat_area_array = np.array(chat_area)
-                color = [240, 180, 0, 255]
+                color = [240, 180, 0]
                 warunek = np.where(np.all(chat_area_array == color, axis=-1))
                 print(warunek)
                 if warunek[0].size > 0 and warunek[1].size > 0:
+                    time.sleep(.03)
                     pyautogui.keyDown('shift')
                     pyautogui.click(221, 241, button='right')
-                    time.sleep(.1)
+                    time.sleep(.03)
                     pyautogui.click(187, 241, button='right')
-                    time.sleep(.1)
+                    time.sleep(.03)
                     pyautogui.click(190, 213, button='right')
-                    time.sleep(.1)
+                    time.sleep(.05)
                     pyautogui.click(193, 186, button='right')
-                    time.sleep(.1)
+                    time.sleep(.03)
                     pyautogui.click(221, 196, button='right')
-                    time.sleep(.1)
+                    time.sleep(.03)
                     pyautogui.click(248, 193, button='right')
-                    time.sleep(.1)
+                    time.sleep(.03)
                     pyautogui.click(253, 215, button='right')
-                    time.sleep(.1)
+                    time.sleep(.03)
                     pyautogui.click(257, 243, button='right')
-                    time.sleep(.1)
+                    time.sleep(.03)
                     pyautogui.click(221, 241, button='right')
-                    time.sleep(.1)
+                    time.sleep(.03)
                     pyautogui.moveTo(221, 218)
-                    time.sleep(.1)
+                    time.sleep(.03)
                     pyautogui.keyUp('shift')
-                    time.sleep(.1)
+                    time.sleep(.3)
                     pyautogui.press('f4')
-                    time.sleep(.1)
+                    time.sleep(.3)
                     pyautogui.press('f5')
-                    time.sleep(.1)
-            # bbox=(440,0, 644,110)
+                    time.sleep(.3)
             elif battle_area.getpixel((cfg.battleListX, cfg.battleListY))[0] != 0:
-                # pos(x,y) must be around 1804,105 if so then char pyautogui.pixel(is in the middle of mark
                 battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
                 if _arrayPos < len(loaded_json):
                     print(f"Walking to {loaded_json[_arrayPos]}")
@@ -89,6 +93,9 @@ def killandwalk(loaded_json):
                     x, y = icon
                     print(cfg.xPosBetween[0] > x > cfg.xPosBetween[1]
                           and cfg.yPosBetween[0] > y > cfg.yPosBetween[1])
+                    pyautogui.press('f5')
+                    time.sleep(0.2)
+                    pyautogui.press('f4')
                     if cfg.xPosBetween[0] < x < cfg.xPosBetween[1] and cfg.yPosBetween[0] < y < cfg.yPosBetween[1]:
                         _arrayPos += 1
                 else:

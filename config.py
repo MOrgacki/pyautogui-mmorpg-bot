@@ -7,7 +7,7 @@
 
 # pos config
 healXpos, healYpos = 145, 9
-chasePos = 781, 150
+chasePosX, chasePosY = 3, 6
 
 # xPosBetween = 1808, 1803
 # yPosBetween = 106, 128
@@ -32,7 +32,7 @@ looted = 51, 553
 looted2 = 51, 527
 # keyboard config
 attackKey = 'f1'
-chaseKey = 'f2'
+chaseKey = 'f12'
 
 high_hp_spell = 'f4'
 low_hp_spell = 'f8'
