@@ -7,16 +7,6 @@ import config as cfg
 import keyboard
 
 
-# https://stackoverflow.com/questions/54789250/q-terminate-a-process-called-in-a-function-from-another-function-in-python
-# https://youtu.be/fKl2JW_qrso?t=583
-# https://www.youtube.com/watch?v=CRJOQtaRT_8
-
-# https://stackoverflow.com/questions/62111046/use-python-to-identify-elements-at-screen
-# https://medium.com/@martin.lees/image-recognition-for-automation-with-python-711ac617b4e5
-
-
-#     pyautogui.screenshot('chase.png', region=(1895, 190, 17, 17))
-
 
 def doRandomPause(a, b):
     seconds = round(np.random.randint(a, b) / 1000, 2)
@@ -29,8 +19,6 @@ def killandwalk(loaded_json):
     while True:
         try:
             time.sleep(.1)
-            # if R==0
-            # bbox=(640,0, 744,110)
             battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
             if battle_area.getpixel((cfg.battleListX, cfg.battleListY))[0] == 0 and battle_area.getpixel((cfg.monsterRedX, cfg.monsterRedY))[0] != 255:
                 print('Rozpoznalem cel')
@@ -120,11 +108,9 @@ def chase():
 def heal():
 
     while True:
-
         condition_h_hp = ImageGrab.grab().getpixel(cfg.high_hp)[0] == 40
         condition_l_hp = ImageGrab.grab().getpixel(cfg.low_hp)[0] == 34
         condition_mana = ImageGrab.grab().getpixel(cfg.mana_bar)[0] == 35
-        # R==0 if heal is almost full
         if condition_h_hp and not condition_l_hp:
             if condition_mana:
                 keyboard.press(cfg.mana_spell)
@@ -136,7 +122,6 @@ def heal():
                 time.sleep(.1)
 
         elif condition_l_hp:
-            # else:
             keyboard.press(cfg.low_hp_spell)
             print('Strong Spell')
             time.sleep(.1)

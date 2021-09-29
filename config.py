@@ -1,24 +1,8 @@
-# https://brokencode.io/how-to-easily-image-search-with-python/
-
-
-# https://stackoverflow.com/questions/53237266/how-can-i-minimize-maximize-windows-in-macos-with-the-cocoa-api-from-a-python-sc
-# 1920x1080 screen size
-# ??? window size
-
-# pos config
 healXpos, healYpos = 145, 9
 chasePosX, chasePosY = 3, 6
 
-# xPosBetween = 1808, 1803
-# yPosBetween = 106, 128
-
-# battleListX, battleListY = 1725, 96
-# monsterRedX, monsterRedY = 1572, 90
 monsterRedX, monsterRedY = 31, 23
 battleListX, battleListY = 165, 32
-
-# xPosBetween = 40, 50
-# yPosBetween = 50, 65
 
 xPosBetween = 684, 690
 yPosBetween = 55, 70
@@ -30,7 +14,7 @@ mana_bar = 385, 11
 
 looted = 51, 553
 looted2 = 51, 527
-# keyboard config
+
 attackKey = 'f1'
 chaseKey = 'f12'
 
