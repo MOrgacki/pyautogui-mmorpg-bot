@@ -3,9 +3,10 @@ from modules import core
 from multiprocessing import freeze_support
 import jsonMaker
 import os
+from modules import healing
 
-VIEWPORT_WIDTH = 200
-VIEWPORT_HEIGHT = 20
+VIEWPORT_WIDTH = 360
+VIEWPORT_HEIGHT = 120
 
 waypoints_list = os.listdir('./data')
 
@@ -24,9 +25,6 @@ def waypoint(Sender):
     core.killandwalk(lista)
 
 
-
-
-
 # def chase(task):
     '''
     Executes chasing through checkbox
@@ -42,15 +40,15 @@ with dpg.window(label="Fluffies 😌",
                 no_move=True,
                 no_close=True
                 ) as main_window:
-    dpg.add_text("Let journey begins - created by Marcin Orgacki")
+    dpg.add_text("OrganBot")
     # dpg.add_checkbox(label="Set Up", callback=check)
-    # dpg.add_same_line()
+    dpg.add_same_line()
     # dpg.add_checkbox(label="Hunting", callback=core.killandwalk)
-    dpg.add_listbox(label="Waypoints", items=waypoints_list,callback=waypoint)
-    # dpg.add_same_line()
-    # dpg.add_checkbox(label="Chase", callback=core.chase)
-    # dpg.add_same_line()
-    # dpg.add_checkbox(label="heal", callback=core.heal)
+    dpg.add_listbox(label="Waypoints", items=waypoints_list, callback=waypoint)
+    dpg.add_same_line()
+    dpg.add_checkbox(label="Chase", callback=core.chase)
+    dpg.add_same_line()
+    dpg.add_checkbox(label="heal", callback=healing.heal)
 
 dpg.setup_viewport()
 dpg.set_primary_window(main_window, True)
@@ -67,5 +65,3 @@ dpg.configure_viewport(
 
 if __name__ == "__main__":
     main()
-
-

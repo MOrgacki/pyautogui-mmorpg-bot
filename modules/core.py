@@ -4,8 +4,6 @@ import time
 from PIL import ImageGrab
 from pebble import concurrent
 import config as cfg
-import keyboard
-
 
 
 def doRandomPause(a, b):
@@ -67,10 +65,6 @@ def killandwalk(loaded_json):
                     time.sleep(.03)
                     pyautogui.keyUp('shift')
                     time.sleep(.3)
-                    pyautogui.press('f4')
-                    time.sleep(.3)
-                    pyautogui.press('f5')
-                    time.sleep(.3)
             elif battle_area.getpixel((cfg.battleListX, cfg.battleListY))[0] != 0:
                 battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
                 if _arrayPos < len(loaded_json):
@@ -81,9 +75,6 @@ def killandwalk(loaded_json):
                     x, y = icon
                     print(cfg.xPosBetween[0] > x > cfg.xPosBetween[1]
                           and cfg.yPosBetween[0] > y > cfg.yPosBetween[1])
-                    pyautogui.press('f5')
-                    time.sleep(0.2)
-                    pyautogui.press('f4')
                     if cfg.xPosBetween[0] < x < cfg.xPosBetween[1] and cfg.yPosBetween[0] < y < cfg.yPosBetween[1]:
                         _arrayPos += 1
                 else:
@@ -102,26 +93,3 @@ def chase():
             pyautogui.press(cfg.chaseKey)
             print('chase')
         time.sleep(10)
-
-
-@ concurrent.process(name='heal')
-def heal():
-
-    while True:
-        condition_h_hp = ImageGrab.grab().getpixel(cfg.high_hp)[0] == 40
-        condition_l_hp = ImageGrab.grab().getpixel(cfg.low_hp)[0] == 34
-        condition_mana = ImageGrab.grab().getpixel(cfg.mana_bar)[0] == 35
-        if condition_h_hp and not condition_l_hp:
-            if condition_mana:
-                keyboard.press(cfg.mana_spell)
-                print('ManaPotion UP')
-                time.sleep(.1)
-            else:
-                keyboard.press(cfg.high_hp_spell)
-                print('Weak Spell')
-                time.sleep(.1)
-
-        elif condition_l_hp:
-            keyboard.press(cfg.low_hp_spell)
-            print('Strong Spell')
-            time.sleep(.1)

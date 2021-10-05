@@ -7,10 +7,9 @@ battleListX, battleListY = 165, 32
 xPosBetween = 684, 690
 yPosBetween = 55, 70
 
-high_hp = 177, 11
-low_hp = 85, 11
-
-mana_bar = 385, 11
+high_hp = 180, 10
+low_hp = 67, 10
+mana_bar = 348, 10
 
 looted = 51, 553
 looted2 = 51, 527
