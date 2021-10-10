@@ -1,20 +1,39 @@
+from Config import Config
 
+class PixelConfig(Config):
+    
+    @property
+    def get_attack(self):
+        return self.get_property('attack')
 
-class PixelConfig:
+    @property
+    def get_chase(self):
+        return self.get_property('chase')
 
-    """ Returns tuple of X,Y positions and position ranges """
-    def __init__(self) -> None:
-        self._heal = 145, 9
-        self._chase = 3, 6
+    @property
+    def get_battle_list(self):
+        return self.get_property('battle_list')
 
-        self._battle_list = 165, 32
-        self._monster_red = 31, 23
+    @property
+    def get_monster_red(self):
+        return self.get_property('monster_red')
 
-        self._between = (684, 690), (55, 70)
+    @property
+    def get_between(self):
+        return self.get_property('between')
 
+    @property
+    def get_high_hp(self):
+        return self.get_property('high_hp')
 
-        self._high_hp = 180, 10
-        self._low_hp = 67, 10
-        self._mana_bar = 348, 10
+    @property
+    def get_low_hp(self):
+        return self.get_property('low_hp')
 
-        self._loot_boundary = (51, 553), (51, 527)
+    @property
+    def get_mana_bar(self):
+        return self.get_property('mana_bar')
+
+    @property
+    def get_loot_boundary(self):
+        return self.get_property('loot_boundary')

@@ -2,36 +2,40 @@ from PIL import ImageGrab
 import time
 import pyautogui
 
+from config.Config import Config
 from config.KeysConfig import KeysConfig
 from config.PixelConfig import PixelConfig
 
 
-class Healing(KeysConfig, PixelConfig):
+class Healing():
+
+    conf_key = KeysConfig()
 
     def __init__(self):
-        #Pixel loction attributes
-        super(PixelConfig, self).__init__()
-        # self._high_hp = high_hp
-        # self._low_hp = low_hp
-        # self._mana_bar = mana_bar
+        #Pixels
+        conf_pixel = PixelConfig()
+        self._high_hp = conf_pixel.get_high_hp
+        self._low_hp = conf_pixel.get_low_hp
+        self._mana_bar = conf_pixel.get_mana_bar
 
-        #Wrapped with getters
-        super(KeysConfig, self).__init__()
-        # self._high_hp_key = high_hp_key
-        # self._low_hp_key = low_hp_key
-        # self._mana_refill_key = mana_refill_key
+        #Keys
+        conf_keys = KeysConfig()
+        self._high_hp_key = conf_keys.get_high_hp_key
+        self._low_hp_key = conf_keys.get_low_hp_key
+        self._mana_refill_key = conf_keys.get_mana_refill_key
 
-    """ High HP Getter """
-    def get_high_hp(self):
-        return self._high_hp_key
+    # """ High HP Getter """
+    # def get_high_hp(self):
+    #     return self._high_hp_key
 
-    """ Low HP Getter """
-    def get_low_hp(self):
-        return self._low_hp_key
+    # """ Low HP Getter """
+    # def get_low_hp(self):
+    #     return self._low_hp_key
 
-    """ Mana Getter """
-    def get_mana_refill(self):
-        return self._mana_refill_key
+    # """ Mana Getter """
+    # def get_mana_refill(self):
+    #     return self._mana_refill_key
+        
     
     """ Realease key press to heal character """
     def press_key(key):
@@ -51,12 +55,12 @@ class Healing(KeysConfig, PixelConfig):
                 bbox=(10, 0, 438, 20)).getpixel(self._mana_bar)[0] == 36
 
             if condition_l_hp:
-                self.press_key(self.get_low_hp())
+                self.press_key( self._low_hp_key)
             elif condition_h_hp:
                 if condition_mana:
-                    self.press_key(self.get_mana_refill())
+                    self.press_key( self._mana_refill_key)
                 else:
-                    self.press_key(self.get_high_hp())
+                    self.press_key( self._high_hp_key)
             else:
                 print('Healing not needed')
 
