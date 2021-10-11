@@ -9,41 +9,28 @@ from config.PixelConfig import PixelConfig
 
 class Healing():
 
-    conf_key = KeysConfig()
-
     def __init__(self):
-        #Pixels
+        # Pixels
         conf_pixel = PixelConfig()
         self._high_hp = conf_pixel.get_high_hp
         self._low_hp = conf_pixel.get_low_hp
         self._mana_bar = conf_pixel.get_mana_bar
 
-        #Keys
+        # Keys
         conf_keys = KeysConfig()
         self._high_hp_key = conf_keys.get_high_hp_key
         self._low_hp_key = conf_keys.get_low_hp_key
         self._mana_refill_key = conf_keys.get_mana_refill_key
 
-    # """ High HP Getter """
-    # def get_high_hp(self):
-    #     return self._high_hp_key
-
-    # """ Low HP Getter """
-    # def get_low_hp(self):
-    #     return self._low_hp_key
-
-    # """ Mana Getter """
-    # def get_mana_refill(self):
-    #     return self._mana_refill_key
-        
-    
     """ Realease key press to heal character """
+
     def press_key(key):
         pyautogui.press(key)
         print(key)
         time.sleep(.1)
 
-    """ Primary healing method"""
+    """ Primary healing method """
+
     def primary_healing(self):
         while True:
             #bbox=(440, 0, 644, 110)
@@ -55,14 +42,11 @@ class Healing():
                 bbox=(10, 0, 438, 20)).getpixel(self._mana_bar)[0] == 36
 
             if condition_l_hp:
-                self.press_key( self._low_hp_key)
+                self.press_key(self._low_hp_key)
             elif condition_h_hp:
                 if condition_mana:
-                    self.press_key( self._mana_refill_key)
+                    self.press_key(self._mana_refill_key)
                 else:
-                    self.press_key( self._high_hp_key)
+                    self.press_key(self._high_hp_key)
             else:
                 print('Healing not needed')
-
-
-

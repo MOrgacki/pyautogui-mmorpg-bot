@@ -1,7 +1,8 @@
-from Config import Config
+from config.Config import Config
+
 
 class KeysConfig(Config):
-    
+
     @property
     def get_attack_key(self):
         return self.get_property('attack_key')

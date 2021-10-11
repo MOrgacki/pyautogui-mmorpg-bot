@@ -1,7 +1,8 @@
-from Config import Config
+from config.Config import Config
+
 
 class PixelConfig(Config):
-    
+
     @property
     def get_attack(self):
         return self.get_property('attack')
