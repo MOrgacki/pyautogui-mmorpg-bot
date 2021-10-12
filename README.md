@@ -11,3 +11,6 @@ Bot consists of major functionalities:
 - Auto Healing
 - Mana Refiller
 - Food Eater
+
+
+# Lessons learned: Threading, RPA, Image Processing
