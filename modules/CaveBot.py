@@ -1,17 +1,20 @@
+
 import numpy as np
 import pyautogui
 import time
 from PIL import ImageGrab
 from threading import Thread
+import os
 
 from config.PixelConfig import PixelConfig
 from config.KeysConfig import KeysConfig
 
 
 class CaveBot:
-    # threading properties
+    # threading property
     stopped = True
 
+    """ Class which runs a cavebot """
     def __init__(self):
         conf_pixel = PixelConfig()
         self._battle_list = conf_pixel.get_battle_list
@@ -24,14 +27,18 @@ class CaveBot:
         self._attack_key = conf_keys.get_attack_key
         self._chase_key = conf_keys.get_chase_key
 
-    def start(self, selected_name):
+
+    """ Starts a thread """
+    def start(self, loaded_json):
         self.stopped = False
-        t = Thread(target=self.run_cvb, args=selected_name)
+        t = Thread(target=self.run_cvb, args=(loaded_json,))
         t.start()
 
+    """ Stops a thread """
     def stop(self):
         self.stopped = True
 
+    """Primary cavebot method"""
     def run_cvb(self, loaded_json):
         _arrayPos = 0
         while not self.stopped:

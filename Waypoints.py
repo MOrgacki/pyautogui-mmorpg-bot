@@ -11,6 +11,7 @@ class Waypoints:
         loaded_json = json.load(file)
         loaded_json = loaded_json['waypoints']
         print(f"Initialized script with {len(loaded_json)} nodes")
+        
         return loaded_json
 
 

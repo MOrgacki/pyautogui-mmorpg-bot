@@ -1,14 +1,17 @@
 from PIL import ImageGrab
 import time
 import pyautogui
+from threading import Thread
 
-from config.Config import Config
 from config.KeysConfig import KeysConfig
 from config.PixelConfig import PixelConfig
 
 
 class Healing():
 
+    stopped = True
+    
+    """ Class which executes healing """
     def __init__(self):
         # Pixels
         conf_pixel = PixelConfig()
@@ -16,23 +19,33 @@ class Healing():
         self._low_hp = conf_pixel.get_low_hp
         self._mana_bar = conf_pixel.get_mana_bar
 
+
         # Keys
         conf_keys = KeysConfig()
         self._high_hp_key = conf_keys.get_high_hp_key
         self._low_hp_key = conf_keys.get_low_hp_key
         self._mana_refill_key = conf_keys.get_mana_refill_key
 
-    """ Realease key press to heal character """
 
-    def press_key(key):
+    """ Starts a thread """
+    def start(self):
+        self.stopped = False
+        t = Thread(target=self.primary_healing)
+        t.start()
+
+    """ Stops a thread """
+    def stop(self):
+        self.stopped = True
+
+    """ Realease key press to heal character """
+    def press_key(self, key):
         pyautogui.press(key)
         print(key)
         time.sleep(.1)
 
     """ Primary healing method """
-
     def primary_healing(self):
-        while True:
+        while not self.stopped:
             #bbox=(440, 0, 644, 110)
             condition_h_hp = ImageGrab.grab(
                 bbox=(10, 0, 438, 20)).getpixel(self._high_hp)[0] == 31

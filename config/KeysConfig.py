@@ -22,3 +22,7 @@ class KeysConfig(Config):
     @property
     def get_mana_refill_key(self):
         return self.get_property('mana_refill_key')
+
+    @property
+    def get_food_key(self):
+        return self.get_property('food_key')

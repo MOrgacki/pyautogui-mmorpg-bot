@@ -24,7 +24,9 @@ keys = {
 
     'high_hp_key': 'f4',
     'low_hp_key': 'f8',
-    'mana_refill_key': 'f7'}
+    'mana_refill_key': 'f7',
+    
+    'food_key': 'f5'}
 
 
 class Config:
