@@ -38,3 +38,11 @@ class PixelConfig(Config):
     @property
     def get_loot_boundary(self):
         return self.get_property('loot_boundary')
+
+    @property
+    def get_battle_list_two_monsters(self):
+        return self.get_property('battle_list_two_monsters')
+    
+    @property
+    def get_battle_list_three_monsters(self):
+        return self.get_property('battle_list_three_monsters')

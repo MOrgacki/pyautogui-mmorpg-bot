@@ -26,3 +26,16 @@ class KeysConfig(Config):
     @property
     def get_food_key(self):
         return self.get_property('food_key')
+
+    @property
+    def get_three_monsters_key(self):
+        return self.get_property('three_monsters_key')
+
+    @property
+    def get_two_monsters_key(self):
+        return self.get_property('two_monsters_key')
+
+    @property
+    def get_two_monsters_key_2(self):
+        return self.get_property('two_monsters_key_2')
+

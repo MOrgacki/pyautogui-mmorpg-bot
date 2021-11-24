@@ -1,16 +1,16 @@
 from PIL import ImageGrab
-import time
 import pyautogui
-from threading import Thread
+import time 
 
 from config.KeysConfig import KeysConfig
 from config.PixelConfig import PixelConfig
 
 
+import asyncio
+
 class Healing():
 
     stopped = True
-    
     """ Class which executes healing """
     def __init__(self):
         # Pixels
@@ -30,8 +30,9 @@ class Healing():
     """ Starts a thread """
     def start(self):
         self.stopped = False
-        t = Thread(target=self.primary_healing)
-        t.start()
+        # t = Thread(target=self.primary_healing, name="Healing")
+        # t.start()
+        self.ThreadManager.NewThread(self.primary_healing)
 
     """ Stops a thread """
     def stop(self):
@@ -39,27 +40,31 @@ class Healing():
 
     """ Realease key press to heal character """
     def press_key(self, key):
-        pyautogui.press(key)
+        pyautogui.hotkey(key)
+        # keyboard.press_and_release('shift+f4')
+        # self._keyboard.pre
         print(key)
-        time.sleep(.1)
+        time.sleep(0.1)
 
-    """ Primary healing method """
-    def primary_healing(self):
+
+    async def primary_healing(self):
+        """ Primary healing method """
+        self.stopped = False
         while not self.stopped:
             #bbox=(440, 0, 644, 110)
-            condition_h_hp = ImageGrab.grab(
-                bbox=(10, 0, 438, 20)).getpixel(self._high_hp)[0] == 31
-            condition_l_hp = ImageGrab.grab(
-                bbox=(10, 0, 438, 20)).getpixel(self._low_hp)[0] == 41
-            condition_mana = ImageGrab.grab(
-                bbox=(10, 0, 438, 20)).getpixel(self._mana_bar)[0] == 36
+            healing_area = ImageGrab.grab(
+                bbox=(10, 0, 438, 20))
+            condition_h_hp = healing_area.getpixel(self._high_hp)[0] == 31
+            condition_l_hp = healing_area.getpixel(self._low_hp)[0] == 41
+            condition_mana = healing_area.getpixel(self._mana_bar)[0] == 36
 
             if condition_l_hp:
-                self.press_key(self._low_hp_key)
+                 self.press_key(self._low_hp_key)
             elif condition_h_hp:
                 if condition_mana:
-                    self.press_key(self._mana_refill_key)
+                     self.press_key(self._mana_refill_key)
                 else:
-                    self.press_key(self._high_hp_key)
+                     self.press_key(self._high_hp_key)
             else:
                 print('Healing not needed')
+            await asyncio.sleep(0.01)

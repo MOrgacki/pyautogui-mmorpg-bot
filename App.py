@@ -5,35 +5,42 @@ from modules import *
 from modules.CaveBot import CaveBot
 from modules.Healing import Healing
 from modules.Utils import Utils
+import asyncio
+from modules.AttackSpells import AttackSpells
 
 # Create Objects
-cavebot = CaveBot()
 healing = Healing()
 utils = Utils()
-
+cavebot = CaveBot()
+attack_spells = AttackSpells()
 # Values
 waypoints_list = os.listdir('./data')
+name = None
 
 """ Starts a bot """
 def cave_bot_start(Value):
+    global name
     name = dpg.get_value(Value)
     update_item(name)
 
     points_obj = Waypoints(name)
     name = points_obj.select_json()
-    cavebot.start(name)
+    # cavebot.start(name)
+
+    return name
 
 """ Starts a healing """
 def healing_start(Value):
+
     if dpg.get_value(Value) == True:
-        healing.start()
+         asyncio.run(start())
     elif dpg.get_value(Value) == False:
         healing.stop()
 
 """ Starts eating """
 def eating_start(Value):
     if dpg.get_value(Value) == True:
-        utils.start()
+        asyncio.run(start())
     elif dpg.get_value(Value) == False:
         utils.stop()
 
@@ -72,9 +79,21 @@ def window():
 
     )
 
-""" Updates label with a currently running script """
+async def start():
+    print("start")
+    await asyncio.gather(
+        healing.primary_healing(),
+        utils.auto_eat(),
+        cavebot.run_cvb(name),
+        # attack_spells.run_spells()
+
+    )
+
 def update_item(item):
+    """ Updates label with a currently running script """
     dpg.configure_item(1, default_value = item)
+
+
 
 
 def main():

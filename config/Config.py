@@ -5,6 +5,8 @@ pixels = {
     'chase': (3, 6),
 
     'battle_list': (165, 32),
+    'battle_list_two_monsters': (165, 54),
+    'battle_list_three_monsters': (165, 76),
     'monster_red': (31, 23),
 
     'between': ((684, 690), (55, 70)),
@@ -22,11 +24,17 @@ keys = {
 
     'chase_key': 'f12',
 
-    'high_hp_key': 'f4',
     'low_hp_key': 'f8',
-    'mana_refill_key': 'f7',
+    'high_hp_key': 'f4',
+    'mana_refill_key':  'f7',
     
-    'food_key': 'f5'}
+    'food_key':  'f5',
+    
+    'two_monsters_key': 'f2',
+    'two_monsters_key_2': 'f3',
+    'three_monsters_key': 'Del',
+    }
+
 
 
 class Config:

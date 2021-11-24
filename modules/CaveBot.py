@@ -1,117 +1,172 @@
-
+import asyncio
 import numpy as np
+
 import pyautogui
-import time
 from PIL import ImageGrab
-from threading import Thread
-import os
 
 from config.PixelConfig import PixelConfig
 from config.KeysConfig import KeysConfig
+from modules.AttackSpells import AttackSpells
 
 
-class CaveBot:
-    # threading property
+
+
+class CaveBot():
     stopped = True
+
+    # battle_area = (440, 0, 644, 110)
+    # chase_area = (776, 150, 780, 158)
+    # chat_area = (0, 477, 60, 578)
+
+    battle_area = 440, 0, 644, 110
+    chase_area = (776, 150, 780, 158)
+    chat_area = (0, 477, 60, 578)
+    loot_color = [240, 180, 0]
 
     """ Class which runs a cavebot """
     def __init__(self):
         conf_pixel = PixelConfig()
-        self._battle_list = conf_pixel.get_battle_list
-        self._monster_red = conf_pixel.get_monster_red
         self._between = conf_pixel.get_between
         self._loot_boundary = conf_pixel.get_loot_boundary
-        self._chase = conf_pixel.get_chase
+        
 
         conf_keys = KeysConfig()
         self._attack_key = conf_keys.get_attack_key
         self._chase_key = conf_keys.get_chase_key
 
+     
+        #Battle List
+        _battle_list = conf_pixel.get_battle_list
+        _monster_red = conf_pixel.get_monster_red
+        _chase = conf_pixel.get_chase
+        
+        self.check_for_monster = (_battle_list[0], _battle_list[1]) 
+        self.check_for_combat = (_monster_red[0], _monster_red[1]) 
+        self.check_for_chase = (_chase[0], _chase[1])
 
+        self._attack_spells = AttackSpells()
+    
     """ Starts a thread """
-    def start(self, loaded_json):
+    def start(self):
         self.stopped = False
-        t = Thread(target=self.run_cvb, args=(loaded_json,))
-        t.start()
-
+        # t = Thread(target=self.run_cvb, name="CaveBot", args=(loaded_json,))
+        # t.start()
+        # self.ThreadManager.NewThread(self.run_cvb)
     """ Stops a thread """
     def stop(self):
         self.stopped = True
 
-    """Primary cavebot method"""
-    def run_cvb(self, loaded_json):
-        _arrayPos = 0
+    def capture_area(self, tuple):
+        return ImageGrab.grab(bbox=tuple)
+
+    # def pixel_of_area(self,x: Image, pixels, x_or_y: int):
+    #     return x.getpixel(pixels)[x_or_y]
+    
+    async def check_loot_area(self):
+            await asyncio.sleep(0.01)
+            self.capture_area(self.chat_area)
+            chat_area_array = np.array(self.chat_area)
+            matches = np.where(np.all(chat_area_array == self.loot_color, axis=-1))
+            print(matches[0], matches[1])
+            return matches[0], matches[1]
+    
+    async def activate_chase(self):
+        pyautogui.press(self._chase_key)
+        print('Activated Chase.')
+        await asyncio.sleep(0.1)
+
+    async def attack_monter(self):
+        print('Monster Detected!')
+        pyautogui.press(self._attack_key)
+        self.capture_area(self.battle_area)
+        while True:
+            self.capture_area(self.battle_area)
+            if self.check_for_combat:
+                print('Attacking!')
+                await asyncio.sleep(0.1)
+                if self.check_for_chase:
+                    self.activate_chase()
+                else:
+                    break
+
+    async def walk_to_waypoint(self, loaded_json, arrayPos) -> None:
+         # go to next waypoint
+        if arrayPos < len(loaded_json):
+            print(f"Walking to {loaded_json[arrayPos]}")
+            icon = pyautogui.locateCenterOnScreen(
+            loaded_json[arrayPos])
+            pyautogui.click(icon)
+            # await asyncio.sleep(0.01)
+            x, y = icon
+            print(self._between[0][0] < x < self._between[0][1]
+                and self._between[1][0] < y < self._between[1][1])
+            if self._between[0][0] < x < self._between[0][1] and self._between[1][0] < y < self._between[1][1]:
+                arrayPos += 1
+        else:
+            arrayPos = 0
+        
+        return arrayPos
+
+    async def start_looting()-> None:
+        # await asyncio.sleep(0.01)
+        pyautogui.keyDown('shift')
+        pyautogui.click(221, 241, button='right')
+        pyautogui.click(187, 241, button='right')
+        pyautogui.click(190, 213, button='right')
+        pyautogui.click(193, 186, button='right')
+        pyautogui.click(221, 196, button='right')
+        pyautogui.click(248, 193, button='right')
+        pyautogui.click(253, 215, button='right')
+        pyautogui.click(257, 243, button='right')
+        pyautogui.click(221, 241, button='right')
+        pyautogui.moveTo(221, 218)
+        pyautogui.keyUp('shift')
+
+    async def run_cvb(self, loaded_json) -> None:
+
+        
+        """Primary cavebot method"""
+        
+        self.stopped = False
+        # should_use_spells = False
+        arrayPos = 0
+        #TEST
+        
         while not self.stopped:
             try:
-                time.sleep(.1)
-                battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
+                # await asyncio.sleep(0.01)
+                monsters = self.capture_area(self.battle_area)
+                chase = self.capture_area(self.chase_area)
                 # if theres is a monster not targeted
-                if battle_area.getpixel((self._battle_list[0], self._battle_list[1]))[0] == 0 and battle_area.getpixel((self._monster_red[0], self._monster_red[1]))[0] != 255:
+                if monsters.getpixel(self.check_for_monster)[0] == 0 and monsters.getpixel(self.check_for_combat)[0] != 255:
                     print('Monster Detected!')
                     pyautogui.press(self._attack_key)
-                    battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
+                    monsters = self.capture_area(self.battle_area)
                     while True:
-                        battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
-                        if battle_area.getpixel((self._monster_red[0], self._monster_red[1]))[0] == 255:
+                        monsters = self.capture_area(self.battle_area)
+                        if monsters.getpixel(self.check_for_combat)[0] == 255:
                             print('Attacking!')
-                            time.sleep(.1)
-                            if ImageGrab.grab(bbox=(776, 150, 780, 158)).getpixel((self._chase[0], self._chase[1]))[1] != 255:
+                            # if should_use_spells == True:
+
+                            #     self._attack_spells.run_spells()
+
+                            # await asyncio.sleep(0.1)
+                            if chase.getpixel(self.check_for_chase)[1] != 255:
                                 pyautogui.press(self._chase_key)
                                 print('Activated Chase.')
-                                time.sleep(.1)
+                                await asyncio.sleep(0.1)
                         else:
-                            time.sleep(.1)
                             break
-                    time.sleep(.1)
-                    # check area for colour
-                    chat_area = ImageGrab.grab(bbox=(0, 477, 60, 578))
-                    chat_area_array = np.array(chat_area)
-                    color = [240, 180, 0]
-                    warunek = np.where(
-                        np.all(chat_area_array == color, axis=-1))
-                    print(warunek)
+                    # check loot area for colour
+                    match_x, match_y = self.check_loot_area()
                     # if no monsters on screen then do looting
-                    if warunek[0].size > 0 and warunek[1].size > 0:
-                        time.sleep(.03)
-                        pyautogui.keyDown('shift')
-                        pyautogui.click(221, 241, button='right')
-                        time.sleep(.03)
-                        pyautogui.click(187, 241, button='right')
-                        time.sleep(.03)
-                        pyautogui.click(190, 213, button='right')
-                        time.sleep(.05)
-                        pyautogui.click(193, 186, button='right')
-                        time.sleep(.03)
-                        pyautogui.click(221, 196, button='right')
-                        time.sleep(.03)
-                        pyautogui.click(248, 193, button='right')
-                        time.sleep(.03)
-                        pyautogui.click(253, 215, button='right')
-                        time.sleep(.03)
-                        pyautogui.click(257, 243, button='right')
-                        time.sleep(.03)
-                        pyautogui.click(221, 241, button='right')
-                        time.sleep(.03)
-                        pyautogui.moveTo(221, 218)
-                        time.sleep(.03)
-                        pyautogui.keyUp('shift')
-                        time.sleep(.3)
+                    if match_x.size > 0 and match_y.size > 0:
+                        self.start_looting()
                 # check if theres no monsters on screen
-                elif battle_area.getpixel((self._battle_list[0], self._battle_list[1]))[0] != 0:
-                    battle_area = ImageGrab.grab(bbox=(440, 0, 644, 110))
+                elif x.getpixel(self.check_for_monster)[0] != 0:
+                    x = self.capture_area(self.battle_area)
                     # go to next waypoint
-                    if _arrayPos < len(loaded_json):
-                        print(f"Walking to {loaded_json[_arrayPos]}")
-                        icon = pyautogui.locateCenterOnScreen(
-                            loaded_json[_arrayPos])
-                        pyautogui.click(icon)
-                        x, y = icon
-                        print(self._between[0][0] < x < self._between[0][1]
-                              and self._between[1][0] < y < self._between[1][1])
-                        if self._between[0][0] < x < self._between[0][1] and self._between[1][0] < y < self._between[1][1]:
-                            _arrayPos += 1
-                    else:
-                        _arrayPos = 0
+                    arrayPos = await self.walk_to_waypoint(loaded_json, arrayPos)
             except:
                 pyautogui.press('f6')
                 print('Clicked F6 to refresh map')
