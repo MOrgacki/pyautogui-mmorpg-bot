@@ -64,11 +64,11 @@ class CaveBot():
     
     async def check_loot_area(self):
             await asyncio.sleep(0.01)
-            self.capture_area(self.chat_area)
-            chat_area_array = np.array(self.chat_area)
+            findings = self.capture_area(self.chat_area)
+            chat_area_array = np.array(findings)
             matches = np.where(np.all(chat_area_array == self.loot_color, axis=-1))
-            print(matches[0], matches[1])
-            return matches[0], matches[1]
+            print(matches)
+            return matches
     
     async def activate_chase(self):
         pyautogui.press(self._chase_key)
@@ -107,7 +107,7 @@ class CaveBot():
         
         return arrayPos
 
-    async def start_looting()-> None:
+    async def start_looting(self):
         # await asyncio.sleep(0.01)
         pyautogui.keyDown('shift')
         pyautogui.click(221, 241, button='right')
@@ -133,7 +133,7 @@ class CaveBot():
         #TEST
         
         while not self.stopped:
-            try:
+            # try:
                 # await asyncio.sleep(0.01)
                 monsters = self.capture_area(self.battle_area)
                 chase = self.capture_area(self.chase_area)
@@ -150,7 +150,7 @@ class CaveBot():
 
                             #     self._attack_spells.run_spells()
 
-                            # await asyncio.sleep(0.1)
+                            await asyncio.sleep(0.1)
                             if chase.getpixel(self.check_for_chase)[1] != 255:
                                 pyautogui.press(self._chase_key)
                                 print('Activated Chase.')
@@ -158,15 +158,16 @@ class CaveBot():
                         else:
                             break
                     # check loot area for colour
-                    match_x, match_y = self.check_loot_area()
+                    matches = await self.check_loot_area()
                     # if no monsters on screen then do looting
-                    if match_x.size > 0 and match_y.size > 0:
-                        self.start_looting()
+                    if matches[0].size > 0 and matches[1].size > 0:
+                        await self.start_looting()
+                        # x = self.capture_area(self.battle_area)
                 # check if theres no monsters on screen
-                elif x.getpixel(self.check_for_monster)[0] != 0:
+                elif self.capture_area(self.battle_area).getpixel(self.check_for_monster)[0] != 0:
                     x = self.capture_area(self.battle_area)
                     # go to next waypoint
                     arrayPos = await self.walk_to_waypoint(loaded_json, arrayPos)
-            except:
-                pyautogui.press('f6')
-                print('Clicked F6 to refresh map')
+            # except:
+            #     pyautogui.press('f6')
+            #     print('Clicked F6 to refresh map')

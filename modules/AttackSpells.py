@@ -38,6 +38,7 @@ class AttackSpells:
         # self._keyboard.pre
         print(key)
         time.sleep(0.1)
+
     def capture_area(self, tuple):
         return ImageGrab.grab(bbox=tuple)
 
@@ -46,24 +47,24 @@ class AttackSpells:
         self.stopped = False
         monsters = self.capture_area(self.battle_area)
 
-        battle_list = monsters.getpixel(self.battle_list)[0] == 0
-        combat = monsters.getpixel(self._monster_red)[0] == 255
-        battle_list_two_monsters = monsters.getpixel(self.battle_list_two_monsters)[0] == 0
-        battle_list_three_monsters = monsters.getpixel(self.battle_list_three_monsters)[0] == 0
+        # battle_list = monsters.getpixel(self.battle_list)[0] == 0
+        # combat = monsters.getpixel(self._monster_red)[0] == 255
+        # battle_list_two_monsters = monsters.getpixel(self.battle_list_two_monsters)[0] == 0
+        # battle_list_three_monsters = monsters.getpixel(self.battle_list_three_monsters)[0] == 0
 
         while not self.stopped:
             #bbox=(440, 0, 644, 110)
-
-            if battle_list and combat and not battle_list_three_monsters:
-                 time.sleep(0.6)
+            monsters = self.capture_area(self.battle_area)
+            if monsters.getpixel(self.battle_list)[0] == 0 and monsters.getpixel(self._monster_red)[0] == 255 and not monsters.getpixel(self.battle_list_three_monsters)[0] == 0:
                  self.press_key(self.one_monster_spell)
                  self.press_key(self.one_monster_spell_2)
                  monsters = self.capture_area(self.battle_area)
-            elif battle_list_three_monsters and combat:
-                 time.sleep(0.5)
-                 self.press_key(self.one_monster_spell)
                  await asyncio.sleep(2.5)
+            elif monsters.getpixel(self.battle_list_three_monsters)[0] == 0 and monsters.getpixel(self._monster_red)[0] == 255:
+                 self.press_key(self.aoe_spell)
                  monsters = self.capture_area(self.battle_area)
+                 await asyncio.sleep(2.5)
             else:
                 print('Not attacking')
+                await asyncio.sleep(0.01)
             

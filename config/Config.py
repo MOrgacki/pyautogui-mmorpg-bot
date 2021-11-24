@@ -6,7 +6,7 @@ pixels = {
 
     'battle_list': (165, 32),
     'battle_list_two_monsters': (165, 54),
-    'battle_list_three_monsters': (165, 76),
+    'battle_list_three_monsters': (165, 75),
     'monster_red': (31, 23),
 
     'between': ((684, 690), (55, 70)),

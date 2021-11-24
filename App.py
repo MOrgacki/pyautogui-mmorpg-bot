@@ -85,7 +85,7 @@ async def start():
         healing.primary_healing(),
         utils.auto_eat(),
         cavebot.run_cvb(name),
-        # attack_spells.run_spells()
+        attack_spells.run_spells()
 
     )
 
