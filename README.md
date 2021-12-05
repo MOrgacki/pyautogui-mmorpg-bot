@@ -15,4 +15,4 @@ Bot consists of major functionalities:
 
 ![image](https://user-images.githubusercontent.com/41207421/137011532-1b330a94-e2a4-4c24-aabf-9a09e721ebdf.png)
 
-# Lessons learned: Threading, RPA, Image Processing
+# Lessons learned: Python Async, RPA, Image Processing
