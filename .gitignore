@@ -144,4 +144,4 @@ cython_debug/
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
-App
+/home/organ/Desktop/Fluffies/fluffies/App
