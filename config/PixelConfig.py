@@ -1,7 +1,10 @@
+
+
 from config.Config import Config
 
 
 class PixelConfig(Config):
+    """Class contains bunch of getters to specific PIXEL location"""
 
     @property
     def get_attack(self):

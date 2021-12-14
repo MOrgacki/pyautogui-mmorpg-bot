@@ -44,6 +44,7 @@ class Utils:
     #     time.sleep(seconds)
 
     async def auto_eat(self):
+        print('started eating')
         self.stopped = False
         while self.stopped == False:
             # with Listener(on_press=key.key_press, on_release=key.key_release) as listener:

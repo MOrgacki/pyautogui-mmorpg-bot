@@ -1,8 +1,11 @@
+
+
 from config.Config import Config
 
 
 class KeysConfig(Config):
-
+    """Class contains bunch of getters to specific KEYS"""
+    
     @property
     def get_attack_key(self):
         return self.get_property('attack_key')
@@ -38,4 +41,8 @@ class KeysConfig(Config):
     @property
     def get_two_monsters_key_2(self):
         return self.get_property('two_monsters_key_2')
+    
+    @property
+    def get_three_monsters_key_strong(self):
+        return self.get_property('three_monsters_key_strong')
 

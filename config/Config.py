@@ -1,5 +1,4 @@
 
-
 pixels = {
     'heal': (145, 9),
     'chase': (3, 6),
@@ -14,7 +13,7 @@ pixels = {
 
     'high_hp': (180, 10),
     'low_hp': (67, 10),
-    'mana_bar': (348, 10),
+    'mana_bar': (348, 12),
 
     'loot_boundary': ((51, 553), (51, 527))}
 
@@ -33,11 +32,13 @@ keys = {
     'two_monsters_key': 'f2',
     'two_monsters_key_2': 'f3',
     'three_monsters_key': 'Del',
+    'three_monsters_key_strong': 'End'
     }
 
 
 
 class Config:
+    """Base Config Class"""
 
     def __init__(self) -> None:
         self._config_pixels = pixels

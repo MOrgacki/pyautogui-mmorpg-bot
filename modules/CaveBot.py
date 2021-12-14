@@ -49,9 +49,7 @@ class CaveBot():
     """ Starts a thread """
     def start(self):
         self.stopped = False
-        # t = Thread(target=self.run_cvb, name="CaveBot", args=(loaded_json,))
-        # t.start()
-        # self.ThreadManager.NewThread(self.run_cvb)
+
     """ Stops a thread """
     def stop(self):
         self.stopped = True
@@ -131,14 +129,15 @@ class CaveBot():
         # should_use_spells = False
         arrayPos = 0
         #TEST
-        
+        print('started walking')
         while not self.stopped:
-            # try:
+            try:
                 # await asyncio.sleep(0.01)
                 monsters = self.capture_area(self.battle_area)
                 chase = self.capture_area(self.chase_area)
                 # if theres is a monster not targeted
                 if monsters.getpixel(self.check_for_monster)[0] == 0 and monsters.getpixel(self.check_for_combat)[0] != 255:
+                    await asyncio.sleep(0.2)
                     print('Monster Detected!')
                     pyautogui.press(self._attack_key)
                     monsters = self.capture_area(self.battle_area)
@@ -168,6 +167,6 @@ class CaveBot():
                     x = self.capture_area(self.battle_area)
                     # go to next waypoint
                     arrayPos = await self.walk_to_waypoint(loaded_json, arrayPos)
-            # except:
-            #     pyautogui.press('f6')
-            #     print('Clicked F6 to refresh map')
+            except:
+                pyautogui.press('f6')
+                print('Clicked F6 to refresh map')
