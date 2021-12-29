@@ -62,9 +62,8 @@ class CaveBot():
         self._attack_spells = AttackSpells()
 
 
-    async def check_loot_area(self):
+    async def check_loot_area(self, findings):
         """Check area for colour"""
-        findings = Helpers.capture_area(self._chat_area)
         chat_area_array = np.array(findings)
         matches = np.where(np.all(chat_area_array == self._loot_color, axis=-1))
         print(matches)
@@ -83,6 +82,7 @@ class CaveBot():
                 print('Attacking!')
             else:
                 break
+        
 
     async def walk_to_waypoint(self, loaded_json, arrayPos,going_to_wpt = False) -> None:
         """Waypoint walker"""
@@ -122,7 +122,7 @@ class CaveBot():
             time.sleep(random.uniform(0.1,0.2))
         pyautogui.moveTo(221, 218)
         pyautogui.keyUp('shift')
-        await asyncio.sleep(0.3)
+        await asyncio.sleep(0.01)
 
 
     async def run_cvb(self, loaded_json) -> None:
@@ -140,7 +140,7 @@ class CaveBot():
                     print('Monster Detected!')
                     self.attack_monster()
                     # after that check loot area for a drop
-                    matches = await self.check_loot_area()
+                    matches = await self.check_loot_area(Helpers.capture_area(self._chat_area))
                     # if theres no monsters on screen then do looting
                     if matches[0].size > 0 and matches[1].size > 0:
                         await self.start_looting()

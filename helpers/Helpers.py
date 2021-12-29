@@ -5,13 +5,13 @@ import random
 
 class Helpers:
 
-    @classmethod
-    def capture_area(self, tuple):
+    @staticmethod
+    def capture_area(tuple):
         """ Makes a screen of a selected area """
         return ImageGrab.grab(bbox=tuple)
     
-    @classmethod
-    def press_key(self, key):
+    @staticmethod
+    def press_key(key):
         """ Realease a key """
         pyautogui.hotkey(key)
         print("Pressed:" + key)
