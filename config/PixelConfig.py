@@ -43,6 +43,10 @@ class PixelConfig(Config):
         return self.get_property('loot_boundary')
 
     @property
+    def get_loot_color(self):
+        return self.get_property('loot_color')
+
+    @property
     def get_battle_list_two_monsters(self):
         return self.get_property('battle_list_two_monsters')
     
