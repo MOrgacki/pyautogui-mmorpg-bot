@@ -70,7 +70,7 @@ class CaveBot():
         return matches
     
 
-    def attack_monster(self):
+    async def attack_monster(self):
         """Attack monster"""
         self.going_to_wpt = False
         print('Monster Detected!')
@@ -79,9 +79,11 @@ class CaveBot():
         while True:
             monsters = Helpers.capture_area(self._battle_area)
             if  monsters.getpixel(self.check_for_combat)[0] == 255:
+                await asyncio.sleep(0.01)
                 print('Attacking!')
             else:
                 break
+        await asyncio.sleep(0.01) 
         
 
     async def walk_to_waypoint(self, loaded_json, arrayPos,going_to_wpt = False) -> None:
@@ -138,7 +140,7 @@ class CaveBot():
                     await asyncio.sleep(0.2)
                     # then attack monster
                     print('Monster Detected!')
-                    self.attack_monster()
+                    await self.attack_monster()
                     # after that check loot area for a drop
                     matches = await self.check_loot_area(Helpers.capture_area(self._chat_area))
                     # if theres no monsters on screen then do looting
