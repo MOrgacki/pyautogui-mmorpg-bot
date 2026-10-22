@@ -1,156 +1,130 @@
-import asyncio
-import numpy as np
 import random
-import pyautogui
 import time
-from config.ImageProcessingConfig import ImageProcessingConfig
 
-from config.PixelConfig import PixelConfig
-from config.KeysConfig import KeysConfig
-from helpers.Helpers import Helpers
-from modules.AttackSpells import AttackSpells
-
+from Waypoints import Waypoints
+from core.Supervisor import FEATURE_REQUIREMENTS
+from detection.Components import ComponentType
+from detection.Readers import battle_entries, find_mark, is_arrived, loot_message_present
 
 
+C = ComponentType
 
-class CaveBot():
-    """ Main class which runs a cavebot """
-    stopped = True
-    going_to_wpt = False
+# The 9 tiles around and under the character, as tile offsets from it
+LOOT_TILES = [(dx, dy) for dy in (-1, 0, 1) for dx in (-1, 0, 1)]
+# Click the waypoint mark again if the character has not arrived after this long
+RECLICK_S = 3.0
 
-    loot_points_list = [
-        [221, 241],
-        [187, 241],
-        [190, 213],
-        [193, 186],
-        [221, 196],
-        [248, 193],
-        [253, 215],
-        [257, 243],
-        [221, 241],
-    ]
+
+class AttackFeature:
+    """ Attacks an untargeted monster from the battle list and waits until it is no longer targeted """
+    key = 'attack'
+    label = 'Attack monsters'
+
+    def requires(self, settings):
+        return FEATURE_REQUIREMENTS[self.key]
+
+    async def run(self, ctx):
+        while True:
+            await ctx.ready()
+            battle = battle_entries(ctx.capture(C.BATTLE_LIST), ctx.layout.scale)
+            if battle.count > 0 and not battle.targeted:
+                ctx.log('Monster detected, attacking')
+                await ctx.press(ctx.settings.hotkeys.attack)
+                await self._wait_while_targeted(ctx)
+            await ctx.sleep(0.05)
+
+    async def _wait_while_targeted(self, ctx):
+        while True:
+            await ctx.ready()
+            if not battle_entries(ctx.capture(C.BATTLE_LIST), ctx.layout.scale).targeted:
+                return
+            await ctx.sleep(0.05)
+
+
+class LootFeature:
+    """ After a kill, if the chat shows a loot message, shift+right-clicks the tiles around the character """
+    key = 'loot'
+    label = 'Loot'
+
+    def requires(self, settings):
+        return FEATURE_REQUIREMENTS[self.key]
+
+    async def run(self, ctx):
+        was_targeted = False
+        while True:
+            await ctx.ready()
+            targeted = battle_entries(ctx.capture(C.BATTLE_LIST), ctx.layout.scale).targeted
+            if was_targeted and not targeted and loot_message_present(ctx.capture(C.CHAT)):
+                await self.loot(ctx)
+            was_targeted = targeted
+            await ctx.sleep(0.05)
+
+    async def loot(self, ctx):
+        tiles = list(LOOT_TILES)
+        random.shuffle(tiles)
+        for dx, dy in tiles:
+            # Shift is pressed and released around each click by GameInput
+            await ctx.click(ctx.layout.tile_point(dx, dy), button='right', modifier='shift')
+        ctx.log('Looted around the character')
+
+
+class WalkFeature:
+    """ Walks the selected route by clicking its marks on the minimap, in order, wrapping to the first """
+    key = 'walk'
+    label = 'Walk route'
+
+    def requires(self, settings):
+        return FEATURE_REQUIREMENTS[self.key]
 
     def __init__(self):
-        #Load Pixels
-        conf_pixel = PixelConfig()
-        self._between = conf_pixel.get_between
-        self._loot_boundary = conf_pixel.get_loot_boundary
-        self._loot_color = conf_pixel.get_loot_color
+        self.position = 0
+        self._route_name = None
+        self._marks = []
+        self._refreshed_for = None
+        self._clicked_at = None
 
-        #Load Keys
-        conf_keys = KeysConfig()
-        self._attack_key = conf_keys.get_attack_key
-        self._chase_key = conf_keys.get_chase_key
+    def _load_route(self, ctx):
+        name = ctx.settings.cavebot.route
+        if name != self._route_name:
+            self._route_name = name
+            self._marks = Waypoints(name).select_json() if name else []
+            self.position = 0
+            self._clicked_at = None
+        return self._marks
 
-        #Load Areas
-        conf_image = ImageProcessingConfig()
-        self._battle_area = conf_image.get_battle_area
-        self._chase_area = conf_image.get_chase_area
-        self._chat_area = conf_image.get_chat_area
- 
-
-        #Battle List
-        _battle_list = conf_pixel.get_battle_list
-        _monster_red = conf_pixel.get_monster_red
-        _chase = conf_pixel.get_chase
-        
-        self.check_for_monster = (_battle_list[0], _battle_list[1]) 
-        self.check_for_combat = (_monster_red[0], _monster_red[1]) 
-        self.check_for_chase = (_chase[0], _chase[1])
-
-        #Attak Spells
-        self._attack_spells = AttackSpells()
-
-
-    async def check_loot_area(self, findings):
-        """Check area for colour"""
-        chat_area_array = np.array(findings)
-        matches = np.where(np.all(chat_area_array == self._loot_color, axis=-1))
-        print(matches)
-        return matches
-    
-
-    async def attack_monster(self):
-        """Attack monster"""
-        self.going_to_wpt = False
-        print('Monster Detected!')
-        pyautogui.press(self._attack_key)
-        Helpers.capture_area(self._battle_area)
+    async def run(self, ctx):
         while True:
-            monsters = Helpers.capture_area(self._battle_area)
-            if  monsters.getpixel(self.check_for_combat)[0] == 255:
-                await asyncio.sleep(0.01)
-                print('Attacking!')
-            else:
-                break
-        await asyncio.sleep(0.01) 
-        
+            await ctx.ready()
+            marks = self._load_route(ctx)
+            if not marks:
+                await ctx.wait('no route selected', 1.0)
+                continue
+            if battle_entries(ctx.capture(C.BATTLE_LIST), ctx.layout.scale).count > 0:
+                # Monsters first; attacking is the attack feature's job
+                await ctx.sleep(0.1)
+                continue
+            await self.step(ctx, marks)
+            await ctx.sleep(0.1)
 
-    async def walk_to_waypoint(self, loaded_json, arrayPos,going_to_wpt = False) -> None:
-        """Waypoint walker"""
-        if arrayPos < len(loaded_json):
-            if going_to_wpt == False:
-                going_to_wpt = True
-                print(f"Walking to {loaded_json[arrayPos]}")
-                icon = pyautogui.locateCenterOnScreen(
-                loaded_json[arrayPos])
-                pyautogui.click(icon)
-                print('clicked map')
-                x, y = icon
-                while going_to_wpt:
-                    icon = pyautogui.locateCenterOnScreen(
-                    loaded_json[arrayPos])
-                    x, y = icon
-                    monsters = Helpers.capture_area(self._battle_area)
-                    if monsters.getpixel(self.check_for_monster)[0] == 0 and monsters.getpixel(self.check_for_combat)[0] != 255:
-                                break
-                    if self._between[0][0] < x < self._between[0][1] and self._between[1][0] < y < self._between[1][1]:
-                        arrayPos += 1
-                        going_to_wpt = False
-                    await asyncio.sleep(0.01) 
-        else:
-            arrayPos = 0
-            going_to_wpt = False
-        
-        return arrayPos, going_to_wpt
-
-    async def start_looting(self) -> None:
-        """Performs looting"""
-
-        random.shuffle(self.loot_points_list)
-        pyautogui.keyDown('shift')
-        for pos in self.loot_points_list:
-            pyautogui.click(x=pos[0],y=pos[1], button='right')
-            time.sleep(random.uniform(0.1,0.2))
-        pyautogui.moveTo(221, 218)
-        pyautogui.keyUp('shift')
-        await asyncio.sleep(0.01)
-
-
-    async def run_cvb(self, loaded_json) -> None:
-        """Primary cavebot method"""
-        arrayPos = 0
-
-        while True:
-            try:
-                time.sleep(0.1)
-                monsters = Helpers.capture_area(self._battle_area)
-                # if theres is a monster not targeted
-                if monsters.getpixel(self.check_for_monster)[0] == 0 and monsters.getpixel(self.check_for_combat)[0] != 255:
-                    await asyncio.sleep(0.2)
-                    # then attack monster
-                    print('Monster Detected!')
-                    await self.attack_monster()
-                    # after that check loot area for a drop
-                    matches = await self.check_loot_area(Helpers.capture_area(self._chat_area))
-                    # if theres no monsters on screen then do looting
-                    if matches[0].size > 0 and matches[1].size > 0:
-                        await self.start_looting()
-                # check if theres no monsters on screen
-                elif Helpers.capture_area(self._battle_area).getpixel(self.check_for_monster)[0] != 0:
-                    # then go to next waypoint
-                    arrayPos, self.going_to_wpt = await self.walk_to_waypoint(loaded_json, arrayPos)
-            except:
-                # Refresh Map
-                pyautogui.press('f6')
-                print('Clicked F6 to refresh map')
+    async def step(self, ctx, marks):
+        self.position %= len(marks)
+        mark_path = marks[self.position]
+        minimap = ctx.layout.get(C.MINIMAP).region
+        point = find_mark(ctx.capture(C.MINIMAP), ctx.mark(mark_path))
+        if point is None:
+            if self._refreshed_for != self.position:
+                # Recovery: the mark may be off the visible map; refresh it once per mark
+                self._refreshed_for = self.position
+                await ctx.press(ctx.settings.hotkeys.refresh_map)
+                ctx.log(f"Mark {mark_path} not found on the minimap; refreshed the map", 'warning')
+            return
+        self._refreshed_for = None
+        if is_arrived(point, (minimap.width, minimap.height), ctx.settings.cavebot.arrival_radius_percent):
+            ctx.log(f"Reached {mark_path}")
+            self.position = (self.position + 1) % len(marks)
+            self._clicked_at = None
+            return
+        now = time.monotonic()
+        if self._clicked_at is None or now - self._clicked_at >= RECLICK_S:
+            await ctx.click((minimap.x + point[0], minimap.y + point[1]))
+            self._clicked_at = now

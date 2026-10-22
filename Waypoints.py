@@ -1,4 +1,18 @@
 import json
+import os
+from dataclasses import dataclass
+
+
+DATA_DIR = './data'
+
+
+@dataclass(frozen=True)
+class RouteInfo:
+    name: str
+    valid: bool
+    missing: tuple
+    error: str | None = None
+
 
 class Waypoints:
     """ Handles waypoint logic """
@@ -6,13 +20,32 @@ class Waypoints:
         self.name = name
 
     def select_json(self):
-        file = open('./data/'+self.name,)
-
-        loaded_json = json.load(file)
+        with open(os.path.join(DATA_DIR, self.name), encoding='utf-8') as file:
+            loaded_json = json.load(file)
         loaded_json = loaded_json['waypoints']
         print(f"Initialized script with {len(loaded_json)} nodes")
-        
+
         return loaded_json
+
+
+def list_routes(data_dir=DATA_DIR):
+    """ Every route file in data/ with whether all of its mark images exist """
+    routes = []
+    for name in sorted(os.listdir(data_dir)):
+        if not name.endswith('.json'):
+            continue
+        try:
+            with open(os.path.join(data_dir, name), encoding='utf-8') as file:
+                marks = json.load(file)['waypoints']
+        except (OSError, ValueError, KeyError, TypeError) as error:
+            routes.append(RouteInfo(name, False, (), f"cannot read route: {error}"))
+            continue
+        if not isinstance(marks, list) or not marks:
+            routes.append(RouteInfo(name, False, (), 'route has no waypoints'))
+            continue
+        missing = tuple(m for m in marks if not os.path.isfile(m))
+        routes.append(RouteInfo(name, not missing, missing))
+    return routes
 
 
 # List of available icons

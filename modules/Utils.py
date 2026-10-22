@@ -1,43 +1,52 @@
-import asyncio
-import pyautogui
-from config.ImageProcessingConfig import ImageProcessingConfig
-from config.PixelConfig import PixelConfig
-from config.KeysConfig import KeysConfig
 import random
-from helpers.Helpers import Helpers
 
-class Utils:
-
-    def __init__(self):
-        """ Class includes all Utilities needed in game"""
-        #Load Keys       
-        conf_keys = KeysConfig()
-        self._chase_key = conf_keys.get_chase_key
-        self._food_key = conf_keys.get_food_key
-
-         #Load Pixels   
-        conf_pixel = PixelConfig()
-        self._chase = conf_pixel.get_chase
-
-        #Load Areas
-        conf_image = ImageProcessingConfig()
-        self._chase_area = conf_image.get_chase_area
+from core.Supervisor import FEATURE_REQUIREMENTS
+from detection.Components import ComponentType
+from detection.Readers import chase_state, hunger_present
 
 
-    async def auto_chase(self):
-        """ Auto chase """
-        
+# How often to look for the hunger icon when eating only when hungry
+HUNGER_CHECK_S = 5.0
+
+
+class EatingFeature:
+    """ Presses the food hotkey on a random interval, or only while the hunger icon shows """
+    key = 'eating'
+    label = 'Eating'
+
+    def requires(self, settings):
+        if settings.eating.when_hungry:
+            return frozenset({ComponentType.STATUS_ICONS})
+        return FEATURE_REQUIREMENTS[self.key]
+
+    async def run(self, ctx):
         while True:
-            if Helpers.capture_area(self._chase_area).getpixel((self._chase[0], self._chase[1]))[1] != 255:
-                pyautogui.press(self._chase_key)
-            else:
-                await asyncio.sleep(round(random.uniform(1.05, 1.75), 2))
+            await ctx.ready()
+            eating = ctx.settings.eating
+            if eating.when_hungry:
+                hungry = hunger_present(ctx.capture(ComponentType.STATUS_ICONS), ctx.template('hunger.png'))
+                if not hungry:
+                    await ctx.sleep(min(HUNGER_CHECK_S, eating.interval_min_s))
+                    continue
+            await ctx.press(ctx.settings.hotkeys.food)
+            await ctx.sleep(round(random.uniform(eating.interval_min_s, eating.interval_max_s), 2))
 
-    async def auto_eat(self):
-        """ Auto eating """
-        
+
+class ChaseFeature:
+    """ Turns chase mode on whenever it is off """
+    key = 'chase'
+    label = 'Auto chase'
+
+    def requires(self, settings):
+        return FEATURE_REQUIREMENTS[self.key]
+
+    async def run(self, ctx):
         while True:
-            pyautogui.press(self._food_key)
-            await asyncio.sleep(round(random.uniform(20.33, 30.66), 2))
-
-        
+            await ctx.ready()
+            image = ctx.capture(ComponentType.COMBAT_CONTROLS)
+            state = chase_state(image, ctx.template('chase_on.png'), ctx.template('chase_off.png'))
+            if state is None:
+                ctx.report_mismatch(ComponentType.COMBAT_CONTROLS, 'chase button not recognised')
+            elif not state:
+                await ctx.press(ctx.settings.hotkeys.chase)
+            await ctx.sleep(round(random.uniform(1.05, 1.75), 2))
